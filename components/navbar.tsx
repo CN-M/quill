@@ -1,10 +1,15 @@
 import Link from "next/link";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants, Button } from "./ui/button";
 import { MaxWidthWrapper } from "./max-width-wrapper";
-import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
+import { SignInButton, SignOutButton } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
+import type { User } from "@clerk/nextjs/api";
 
-export const Navbar = () => {
+export const Navbar = async () => {
+  const user: User | null = await currentUser();
+
   return (
     <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -26,21 +31,24 @@ export const Navbar = () => {
               >
                 Pricing
               </Link>
-              <LoginLink
+
+              {user ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <SignInButton afterSignInUrl="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    Sign in
+                  </Button>
+                </SignInButton>
+              )}
+              <Link
                 className={buttonVariants({
-                  variant: "ghost",
                   size: "sm",
                 })}
-              >
-                Sign in
-              </LoginLink>
-              <RegisterLink
-                className={buttonVariants({
-                  size: "sm",
-                })}
+                href={"/"}
               >
                 Get started <ArrowRight className="ml-1.5 h-5 w-5" />
-              </RegisterLink>
+              </Link>
             </>
           </div>
         </div>
