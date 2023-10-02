@@ -1,11 +1,20 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { buttonVariants, Button } from "./ui/button";
 import { MaxWidthWrapper } from "./max-width-wrapper";
-import { SignInButton, SignOutButton } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignOutButton,
+  UserButton,
+  currentUser,
+  ClerkLoading,
+  ClerkLoaded,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/api";
+import { Skeleton } from "./ui/skeleton";
 
 export const Navbar = async () => {
   const user: User | null = await currentUser();
@@ -32,15 +41,38 @@ export const Navbar = async () => {
                 Pricing
               </Link>
 
-              {user ? (
-                <UserButton afterSignOutUrl="/" />
-              ) : (
-                <SignInButton afterSignInUrl="/dashboard">
-                  <Button variant="ghost" size="sm">
-                    Sign in
-                  </Button>
-                </SignInButton>
-              )}
+              <SignedIn>
+                <ClerkLoading>
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </ClerkLoading>
+                <ClerkLoaded>
+                  <div className="h-8 w-8 rounded-full">
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </ClerkLoaded>
+              </SignedIn>
+              <SignedOut>
+                <ClerkLoading>
+                  <Skeleton
+                    className={
+                      (cn(
+                        buttonVariants({
+                          size: "sm",
+                          variant: "ghost",
+                        })
+                      ),
+                      "h-9 w-20 rounded-md")
+                    }
+                  />
+                </ClerkLoading>
+                <ClerkLoaded>
+                  <SignInButton afterSignInUrl="/dashboard">
+                    <Button variant="ghost" size="sm">
+                      Sign in
+                    </Button>
+                  </SignInButton>
+                </ClerkLoaded>
+              </SignedOut>
               <Link
                 className={buttonVariants({
                   size: "sm",

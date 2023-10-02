@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Providers } from "@/components/providers/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,15 +21,17 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="light">
-        <body
-          className={cn(
-            "min-h-screen font-sans antialiased grainy",
-            inter.className
-          )}
-        >
-          <Navbar />
-          {children}
-        </body>
+        <Providers>
+          <body
+            className={cn(
+              "min-h-screen font-sans antialiased grainy",
+              inter.className
+            )}
+          >
+            <Navbar />
+            {children}
+          </body>
+        </Providers>
       </html>
     </ClerkProvider>
   );
